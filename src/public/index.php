@@ -52,13 +52,9 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+define('ENVIRONMENT', getenv('CI_ENV'));
 
-if(isset($_SERVER['CI_DOMAIN']))
-{
-    $domain = $_SERVER['CI_DOMAIN'];
-}
-define('DOMAIN', !empty($domain) ? $domain: 'example.com');
+define('DOMAIN', getenv('NGINX_SERVER_NAME'));
 
 /*
  *---------------------------------------------------------------
@@ -122,7 +118,7 @@ $system_path = '../system';
  *
  * NO TRAILING SLASH!
  */
-$application_folder = '/var/www/test_task/application';
+$application_folder = getenv('CI_APP_DIR');
 
 /*
  *---------------------------------------------------------------
