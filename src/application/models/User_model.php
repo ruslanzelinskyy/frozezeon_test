@@ -374,6 +374,17 @@ class User_model extends CI_Emerald_Model {
         }
     }
 
+    public function find_by_email(String $email): Array
+    {
+        $user = App::get_ci()->s->from(self::CLASS_TABLE)->where(['email' => $email])->one();
 
+        return $user;
+    }
 
+    public function find_by_token(String $token): Array
+    {
+        $user = App::get_ci()->s->from(self::CLASS_TABLE)->where(['token' => $token])->one();
+
+        return $user;
+    }
 }

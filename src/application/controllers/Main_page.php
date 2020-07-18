@@ -27,8 +27,6 @@ class Main_page extends MY_Controller
     {
         $user = User_model::get_user();
 
-
-
         App::get_ci()->load->view('main_page', ['user' => User_model::preparation($user, 'default')]);
     }
 
@@ -58,7 +56,6 @@ class Main_page extends MY_Controller
         return $this->response_success(['post' => $posts]);
     }
 
-
     public function comment($post_id,$message){ // or can be App::get_ci()->input->post('news_id') , but better for GET REQUEST USE THIS ( tests )
 
         if (!User_model::is_logged()){
@@ -83,31 +80,26 @@ class Main_page extends MY_Controller
         return $this->response_success(['post' => $posts]);
     }
 
-
-    public function login($user_id)
+    public function authentificate()
     {
-        // Right now for tests:
-        $post_id = intval($user_id);
-
-        if (empty($post_id)){
-            return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
-        }
-
-        // But data from modal window sent by POST request.  App::get_ci()->input...  to get it.
-
-
-        //Todo: Authorisation
-
-        Login_model::start_session($user_id);
-
-        return $this->response_success(['user' => $user_id]);
+        return $this->response(Login_model::authentificate(
+            $this->User_model,
+            $this->input->post('login'),
+            $this->input->post('password')
+        ));
     }
 
+    public function authorize()
+    {
+        return $this->response(Login_model::authorize(
+            $this->User_model,
+            $this->input->post('token')
+        ));
+    }
 
     public function logout()
     {
-        Login_model::logout();
-        redirect(site_url('/'));
+        return $this->response(['status' => 'logged-out']);
     }
 
     public function add_money(){
@@ -120,10 +112,8 @@ class Main_page extends MY_Controller
         return $this->response_success(['amount' => rand(1,55)]);
     }
 
-
     public function like(){
         // todo: add like post\comment logic
         return $this->response_success(['likes' => rand(1,55)]); // Колво лайков под постом \ комментарием чтобы обновить
     }
-
 }

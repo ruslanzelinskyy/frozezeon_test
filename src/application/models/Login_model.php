@@ -7,21 +7,50 @@ class Login_model extends CI_Model {
 
     }
 
-    public static function logout()
+    public static function authentificate(
+        User_model $loadedUserModel,
+        String $userEmail,
+        String $userPassword
+    ): Array
     {
-        App::get_ci()->session->unset_userdata('id');
-    }
+        $user = $loadedUserModel->find_by_email($userEmail);
 
-    public static function start_session(int $user_id)
-    {
-        // если перенедан пользователь
-        if (empty($user_id))
-        {
-            throw new CriticalException('No id provided!');
+        if(empty($user) || $user['password'] != $userPassword) {
+
+            return ['status' => 'authentification_error'];
         }
 
-        App::get_ci()->session->set_userdata('id', $user_id);
+        $bytes = random_bytes(5);
+        $token = bin2hex($bytes);
+
+        App::get_ci()->s
+            ->from($loadedUserModel::CLASS_TABLE)
+            ->where(['id'=> $user['id']])
+            ->update(['token' => $token])
+            ->execute();
+
+        return self::authorize($loadedUserModel, $token);
     }
 
+    public static function authorize(
+        User_model $loadedUserModel,
+        String $token
+    ): Array
+    {
+        $user = $loadedUserModel->find_by_token($token);
 
+        if(empty($user)) {
+            return [
+                'token' => '',
+                'status' => 'authorization_error',
+                'username' => ''
+            ];
+        }
+
+        return [
+            'token' => $token,
+            'status' => 'success',
+            'username' => $user['personaname']
+        ];
+    }
 }

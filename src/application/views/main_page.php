@@ -21,41 +21,26 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
         <li class="nav-item">
-            <?  if (User_model::is_logged()) {?>
-              <a href="/main_page/logout" class="btn btn-primary my-2 my-sm-0"
-                 data-target="#loginModal">Log out, <?= $user->personaname?>
-              </a>
-            <? } else {?>
-              <button type="button" class="btn btn-success my-2 my-sm-0" type="submit" data-toggle="modal"
-                      data-target="#loginModal">Log IN
-              </button>
-            <? } ?>
+            <button
+                    id="logout-button"
+                    class="btn btn-primary my-2 my-sm-0 hidden"
+                    @click.prevent="logOut"
+            >Log out, </button>
+            <button
+                    id="login-button"
+                    type="button"
+                    class="btn btn-success my-2 my-sm-0"
+                    type="submit"
+                    data-toggle="modal"
+                    data-target="#loginModal"
+            >Log IN</button>
         </li>
         <li class="nav-item">
-            <?  if (User_model::is_logged()) {?>
-              <button type="button" class="btn btn-success my-2 my-sm-0" type="submit" data-toggle="modal"
-                      data-target="#addModal">Add balance
-              </button>
-            <? }?>
+            <button type="button" class="btn btn-success my-2 my-sm-0" type="submit" data-toggle="modal"
+                  data-target="#addModal">Add balance
+            </button>
         </li>
       </div>
-<!--      <div class="collapse navbar-collapse" id="navbarTogglerDemo01">-->
-<!--        <li class="nav-item">-->
-<!--            --><?// if (User_model::is_logged()) {?>
-<!--              <button type="button" class="btn btn-primary my-2 my-sm-0" type="submit" data-toggle="modal"-->
-<!--                      data-target="#loginModal">Log in-->
-<!--              </button>-->
-<!--            --><?// } else {?>
-<!--              <button type="button" class="btn btn-danger my-2 my-sm-0" href="/logout">Log out-->
-<!--              </button>-->
-<!--            --><?// } ?>
-<!--        </li>-->
-<!--        <li class="nav-item">-->
-<!--          <button type="button" class="btn btn-success my-2 my-sm-0" type="submit" data-toggle="modal"-->
-<!--                  data-target="#addModal">Add balance-->
-<!--          </button>-->
-<!--        </li>-->
-<!--      </div>-->
     </nav>
   </div>
   <div class="main">
@@ -242,6 +227,7 @@
     </div>
   </div>
 </div>
+<script src="https://unpkg.com/vuex"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
@@ -252,8 +238,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
+<script src="/js/store.js?v=<?= filemtime(FCPATH . '/js/store.js') ?>"></script>
 <script src="/js/app.js?v=<?= filemtime(FCPATH . '/js/app.js') ?>"></script>
 </body>
 </html>
-
-

@@ -35,6 +35,17 @@ var app = new Vue({
 	},
 	created(){
 		var self = this
+		store.dispatch('authorize')
+			.then(function() {
+				if(store.getters.isLoggedIn) {
+					let logoutButton = $('#logout-button')
+					logoutButton.removeClass('hidden')
+					logoutButton.text(logoutButton.text() + localStorage.getItem('username'))
+
+					$('#login-button').addClass('hidden')
+				}
+			})
+			.catch(err => console.log(err))
 		axios
 			.get('/main_page/get_all_posts')
 			.then(function (response) {
@@ -42,8 +53,15 @@ var app = new Vue({
 			})
 	},
 	methods: {
-		logout: function () {
-			console.log ('logout');
+		logOut: function () {
+			store.dispatch('logout')
+				.then(function() {
+					if(!store.isLoggedIn) {
+						$('#logout-button').addClass('hidden')
+						$('#login-button').removeClass('hidden')
+					}
+				})
+				.catch(err => console.log(err))
 		},
 		logIn: function () {
 			var self= this;
@@ -57,15 +75,18 @@ var app = new Vue({
 			else{
 				self.invalidLogin = false
 				self.invalidPass = false
-				axios.post('/main_page/login', {
-					login: self.login,
-					password: self.pass
-				})
-					.then(function (response) {
-						setTimeout(function () {
-							$('#loginModal').modal('hide');
-						}, 500);
+				let authFormData = new FormData();
+				authFormData.set('login', self.login);
+				authFormData.set('password', self.pass);
+				store.dispatch('authentificate', authFormData)
+					.then(function() {
+						if(store.getters.isLoggedIn) {
+							$('#loginModal').modal('hide')
+							$('#logout-button').removeClass('hidden')
+							$('#login-button').addClass('hidden')
+						}
 					})
+					.catch(err => console.log(err))
 			}
 		},
 		fiilIn: function () {
