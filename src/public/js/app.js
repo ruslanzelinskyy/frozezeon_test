@@ -10,6 +10,8 @@ var app = new Vue({
 		posts: [],
 		addSum: 0,
 		amount: 0,
+		userLikes: localStorage.getItem('userLikes') || 0,
+		userMoney: localStorage.getItem('userMoney') || 0,
 		likes: 0,
 		commentText: '',
 		packs: [
@@ -96,14 +98,14 @@ var app = new Vue({
 			}
 			else{
 				self.invalidSum = false
-				axios.post('/main_page/add_money', {
-					sum: self.addSum,
-				})
-					.then(function (response) {
-						setTimeout(function () {
-							$('#addModal').modal('hide');
-						}, 500);
+				let addMoneyFormData = new FormData();
+				addMoneyFormData.set('amount', self.addSum);
+				store.dispatch('addMoney', addMoneyFormData)
+					.then(function() {
+						self.userMoney = localStorage.getItem('userMoney')
+						$('#addModal').modal('hide');
 					})
+					.catch(err => console.log(err))
 			}
 		},
 		openPost: function (id) {
@@ -144,4 +146,3 @@ var app = new Vue({
 		}
 	}
 });
-

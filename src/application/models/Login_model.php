@@ -32,25 +32,36 @@ class Login_model extends CI_Model {
         return self::authorize($loadedUserModel, $token);
     }
 
+    public static function identifyUser(User_model $loadedUserModel, String $token) {
+        $user = $loadedUserModel->find_by_token($token);
+
+        if(empty($user)) {
+            return false;
+        }
+
+        return $user;
+    }
+
     public static function authorize(
         User_model $loadedUserModel,
         String $token
     ): Array
     {
-        $user = $loadedUserModel->find_by_token($token);
 
-        if(empty($user)) {
+        $userIndentified = self::identifyUser($loadedUserModel, $token);
+
+        if(!$userIndentified) {
             return [
-                'token' => '',
                 'status' => 'authorization_error',
-                'username' => ''
             ];
         }
 
         return [
             'token' => $token,
             'status' => 'success',
-            'username' => $user['personaname']
+            'username' => $userIndentified['personaname'],
+            'money' => $userIndentified['wallet_balance'],
+            'likes' => $userIndentified['wallet_likes']
         ];
     }
 }

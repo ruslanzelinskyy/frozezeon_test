@@ -40,6 +40,11 @@
                   data-target="#addModal">Add balance
             </button>
         </li>
+        <li class="nav-item">
+            <button type="button" class="btn btn-success my-2 my-sm-0" type="submit" data-toggle="modal"
+                    data-target="#profileModal">View profile
+            </button>
+        </li>
       </div>
     </nav>
   </div>
@@ -226,6 +231,27 @@
       </div>
     </div>
   </div>
+    <!-- Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2 class="text-center">Your likes: {{userLikes}}</h2>
+                    <h2 class="text-center">Your money: {{userMoney}}$</h2>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="https://unpkg.com/vuex"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>

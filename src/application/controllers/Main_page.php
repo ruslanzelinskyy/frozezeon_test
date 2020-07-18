@@ -103,8 +103,26 @@ class Main_page extends MY_Controller
     }
 
     public function add_money(){
-        // todo: add money to user logic
-        return $this->response_success(['amount' => rand(1,55)]);
+
+        $loadedUserModel = $this->User_model;
+        App::get_ci()->load->model('Wallet_model');
+
+        $userIndentified = Login_model::identifyUser(
+            $loadedUserModel,
+            $this->input->get_request_header('Authorization')
+        );
+
+        if(!$userIndentified) {
+            return $this->response([
+                'status' => 'authorization_error',
+            ]);
+        }
+
+        return $this->response($this->Wallet_model->refill(
+            $loadedUserModel,
+            $userIndentified,
+            $this->input->post('amount')
+        ));
     }
 
     public function buy_boosterpack(){
