@@ -36,8 +36,8 @@
             >Log IN</button>
         </li>
         <li class="nav-item">
-            <button type="button" class="btn btn-success my-2 my-sm-0" type="submit" data-toggle="modal"
-                  data-target="#addModal">Add balance
+            <button type="button" class="btn btn-success my-2 my-sm-0" type="submit"
+                    @click.prevent="showAddMoneyModal">Add balance
             </button>
         </li>
         <li class="nav-item">
@@ -223,7 +223,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <h2 class="text-center">Likes: {{amount}}</h2>
+          <h2 class="text-center">Likes: {{last_buy_likes_count}}</h2>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
@@ -243,7 +243,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h2 class="text-center">Your likes: {{userLikes}}</h2>
+                    <h2 class="text-center">Your likes: {{userLikesCount}}</h2>
                     <h2 class="text-center">Your money: {{userMoney}}$</h2>
                 </div>
                 <div class="modal-footer">

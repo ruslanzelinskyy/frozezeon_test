@@ -124,4 +124,23 @@ class Boosterpack_model extends CI_Emerald_Model
         return (App::get_ci()->s->get_affected_rows() > 0);
     }
 
+    public function find_by_id(Int $id): Array
+    {
+        $boosterpack = App::get_ci()->s->from(self::CLASS_TABLE)->where(['id' => $id])->one();
+
+        return $boosterpack;
+    }
+
+    public function buy_pack($boosterpack, $likes) {
+
+        $boosterpack_bank_delta = $boosterpack['price'] - $likes;
+
+        $boosterpack_bank_result = $boosterpack['bank'] + $boosterpack_bank_delta;
+
+        App::get_ci()->s
+            ->from(self::CLASS_TABLE)
+            ->where(['id' => $boosterpack['id']])
+            ->update(['bank' => $boosterpack_bank_result])
+            ->execute();
+    }
 }

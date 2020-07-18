@@ -9,8 +9,8 @@ var app = new Vue({
 		invalidSum: false,
 		posts: [],
 		addSum: 0,
-		amount: 0,
-		userLikes: localStorage.getItem('userLikes') || 0,
+		last_buy_likes_count: localStorage.getItem('last_buy_likes_count') || 0,
+		userLikesCount: localStorage.getItem('userLikesCount') || 0,
 		userMoney: localStorage.getItem('userMoney') || 0,
 		likes: 0,
 		commentText: '',
@@ -37,9 +37,10 @@ var app = new Vue({
 	},
 	created(){
 		var self = this
+
 		store.dispatch('authorize')
-			.then(function() {
-				if(store.getters.isLoggedIn) {
+			.then(function () {
+				if (localStorage.getItem('status') == 'success') {
 					let logoutButton = $('#logout-button')
 					logoutButton.removeClass('hidden')
 					logoutButton.text(logoutButton.text() + localStorage.getItem('username'))
@@ -48,6 +49,7 @@ var app = new Vue({
 				}
 			})
 			.catch(err => console.log(err))
+
 		axios
 			.get('/main_page/get_all_posts')
 			.then(function (response) {
@@ -91,6 +93,13 @@ var app = new Vue({
 					.catch(err => console.log(err))
 			}
 		},
+		showAddMoneyModal: function() {
+			if(localStorage.getItem('status') == 'success') {
+				$('#addModal').modal('show');
+			} else {
+				$('#loginModal').modal('show')
+			}
+		},
 		fiilIn: function () {
 			var self= this;
 			if(self.addSum === 0){
@@ -101,7 +110,7 @@ var app = new Vue({
 				let addMoneyFormData = new FormData();
 				addMoneyFormData.set('amount', self.addSum);
 				store.dispatch('addMoney', addMoneyFormData)
-					.then(function() {
+					.then(function () {
 						self.userMoney = localStorage.getItem('userMoney')
 						$('#addModal').modal('hide');
 					})
@@ -132,17 +141,20 @@ var app = new Vue({
 		},
 		buyPack: function (id) {
 			var self= this;
-			axios.post('/main_page/buy_boosterpack', {
-				id: id,
-			})
-				.then(function (response) {
-					self.amount = response.data.amount
-					if(self.amount !== 0){
-						setTimeout(function () {
-							$('#amountModal').modal('show');
-						}, 500);
-					}
-				})
+			if(localStorage.getItem('status') == 'success') {
+				let buyPackFormData = new FormData();
+				buyPackFormData.set('boosterpack_id', id);
+				store.dispatch('buyPack', buyPackFormData)
+					.then(function() {
+						self.last_buy_likes_count = localStorage.getItem('last_buy_likes_count')
+						self.userLikesCount = localStorage.getItem('userLikesCount')
+						self.userMoney = localStorage.getItem('userMoney')
+						$('#amountModal').modal('show');
+					})
+					.catch(err => console.log(err))
+			} else {
+				$('#loginModal').modal('show')
+			}
 		}
 	}
 });

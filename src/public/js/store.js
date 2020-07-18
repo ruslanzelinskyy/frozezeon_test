@@ -3,8 +3,11 @@ var store = new Vuex.Store({
         status: localStorage.getItem('status') || '',
         username: localStorage.getItem('username') || '',
         token: localStorage.getItem('token') || '',
+        last_refill_status: localStorage.getItem('last_refill_status') || 0,
+        last_buy_status: localStorage.getItem('last_buy_status') || 0,
         userMoney: localStorage.getItem('userMoney') || 0,
         userLikesCount: localStorage.getItem('userLikesCount') || 0,
+        last_buy_likes_count: localStorage.getItem('userLikesCount') || 0,
     },
     mutations: {
         auth(state, payload){
@@ -26,6 +29,12 @@ var store = new Vuex.Store({
             localStorage.setItem('last_refill_status', payload.last_refill_status)
             localStorage.setItem('userMoney', payload.result_balance)
         },
+        buy_pack(state, payload) {
+            localStorage.setItem('last_buy_status', payload.last_buy_status)
+            localStorage.setItem('userLikesCount', payload.userLikesCount)
+            localStorage.setItem('userMoney', payload.userMoney)
+            localStorage.setItem('last_buy_likes_count', payload.last_buy_likes_count)
+        }
     },
     actions: {
         authentificate({commit}, authFormData) {
@@ -116,6 +125,33 @@ var store = new Vuex.Store({
                     })
             })
         },
+        buyPack({commit}, buyPackFormData) {
+            return new Promise((resolve, reject) => {
+                axios({
+                    url: '/main_page/buy_boosterpack',
+                    method: 'post',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    data: buyPackFormData,
+                })
+                    .then(response => {
+                        const last_buy_status = response.data.last_buy_status
+                        const userMoney = response.data.userMoney
+                        const userLikesCount = response.data.userLikesCount
+                        const last_buy_likes_count = response.data.last_buy_likes_count
+                        commit('buy_pack', {
+                            last_buy_status,
+                            userMoney,
+                            userLikesCount,
+                            last_buy_likes_count
+                        })
+                        resolve(response)
+                    })
+                    .catch(err => {
+                        commit('add_money_error')
+                        reject(err)
+                    })
+            })
+        }
     },
     getters : {
         isLoggedIn: state => !!localStorage.getItem('token'),

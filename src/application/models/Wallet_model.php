@@ -46,4 +46,33 @@ class Wallet_model extends CI_Model
             'result_balance' => $result_balance
         ];
     }
+
+    public function buy_pack(
+        User_model $loadedUserModel,
+        Array $user_identified,
+        Int $result_balance,
+        Int $result_likes
+    ): void {
+        $current_balance = $user_identified['wallet_balance'];
+
+        App::get_ci()->s->start_trans();
+
+        //Update user money balance
+        App::get_ci()->s
+            ->from($loadedUserModel::CLASS_TABLE)
+            ->where(['id' => $user_identified['id']])
+            ->update(['wallet_balance' => $result_balance])
+            ->update(['wallet_likes' => $result_likes])
+            ->execute();
+
+        App::get_ci()->s->commit();
+
+        App::get_ci()->load->library('Logger');
+
+        $this->logger->log_wallet_buy_pack(
+            $user_identified['id'],
+            $current_balance,
+            $result_balance
+        );
+    }
 }

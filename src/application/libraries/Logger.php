@@ -22,11 +22,26 @@ class Logger extends CI_Log
     ): void
     {
         $this->default_log('wallet',
+            "ACTION: WALLET_REFILL; ".
             "USERID: {$user_id}; " .
             "BALANCE_BEFORE: {$balance_before}; " .
             "TOTAL_BEFORE: {$total_before}; " .
             "BALANCE_RESULT: {$balance_result}; " .
             "TOTAL_RESULT: {$total_result}."
+            , 'wallet');
+    }
+
+    public function log_wallet_buy_pack(
+        $user_id,
+        $balance_before,
+        $balance_result
+    ): void
+    {
+        $this->default_log('wallet',
+            "ACTION: BUY_PACK; ".
+            "USERID: {$user_id}; " .
+            "BALANCE_BEFORE: {$balance_before}; " .
+            "BALANCE_RESULT: {$balance_result}. "
             , 'wallet');
     }
 

@@ -126,12 +126,48 @@ class Main_page extends MY_Controller
     }
 
     public function buy_boosterpack(){
-        // todo: add money to user logic
-        return $this->response_success(['amount' => rand(1,55)]);
+        $loadedUserModel = $this->User_model;
+        $userIdentified = $this->getIdentifiedUser();
+
+        if(!$userIdentified) {
+            return $this->response([
+                'status' => 'authorization_error',
+            ]);
+        }
+
+        App::get_ci()->load->model('Boosterpack_model');
+
+        $boosterpack = $this->Boosterpack_model
+            ->find_by_id($this->input->post('boosterpack_id'));
+
+        if(empty($boosterpack)) {
+            return $this->response([
+                'status' => 'boosterpack_does_not_exists',
+            ]);
+        }
+
+        App::get_ci()->load->model('Buy_pack_service');
+
+        return $this->response($this->Buy_pack_service->buy_pack(
+            $loadedUserModel,
+            $userIdentified,
+            $boosterpack
+        ));
     }
 
     public function like(){
         // todo: add like post\comment logic
         return $this->response_success(['likes' => rand(1,55)]); // Колво лайков под постом \ комментарием чтобы обновить
+    }
+
+    private function getIdentifiedUser() {
+        $loadedUserModel = $this->User_model;
+
+        $userIdentified = Login_model::identifyUser(
+            $loadedUserModel,
+            $this->input->get_request_header('Authorization')
+        );
+
+        return $userIdentified;
     }
 }
