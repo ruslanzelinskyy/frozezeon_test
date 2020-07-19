@@ -142,8 +142,7 @@ class Post_model extends CI_Emerald_Model
     {
         $this->is_loaded(TRUE);
 
-        if (empty($this->comments))
-        {
+        if (empty($this->comments)) {
             $this->comments = Comment_model::get_all_by_assign_id($this->get_id());
         }
         return $this->comments;
@@ -153,16 +152,14 @@ class Post_model extends CI_Emerald_Model
     /**
      * @return User_model
      */
-    public function get_user():User_model
+    public function get_user(): User_model
     {
         $this->is_loaded(TRUE);
 
-        if (empty($this->user))
-        {
+        if (empty($this->user)) {
             try {
                 $this->user = new User_model($this->get_user_id());
-            } catch (Exception $exception)
-            {
+            } catch (Exception $exception) {
                 $this->user = new User_model();
             }
         }
@@ -207,8 +204,7 @@ class Post_model extends CI_Emerald_Model
 
         $data = App::get_ci()->s->from(self::CLASS_TABLE)->many();
         $ret = [];
-        foreach ($data as $i)
-        {
+        foreach ($data as $i) {
             $ret[] = (new self())->set($i);
         }
         return $ret;
@@ -222,8 +218,7 @@ class Post_model extends CI_Emerald_Model
      */
     public static function preparation($data, $preparation = 'default')
     {
-        switch ($preparation)
-        {
+        switch ($preparation) {
             case 'main_page':
                 return self::_preparation_main_page($data);
             case 'full_info':
@@ -241,7 +236,7 @@ class Post_model extends CI_Emerald_Model
     {
         $ret = [];
 
-        foreach ($data as $d){
+        foreach ($data as $d) {
             $o = new stdClass();
 
             $o->id = $d->get_id();
@@ -249,7 +244,7 @@ class Post_model extends CI_Emerald_Model
 
             $o->text = $d->get_text();
 
-            $o->user = User_model::preparation($d->get_user(),'main_page');
+            $o->user = User_model::preparation($d->get_user(), 'main_page');
 
             $o->time_created = $d->get_time_created();
             $o->time_updated = $d->get_time_updated();
@@ -277,8 +272,8 @@ class Post_model extends CI_Emerald_Model
 
 //            var_dump($d->get_user()->object_beautify()); die();
 
-        $o->user = User_model::preparation($data->get_user(),'main_page');
-        $o->coments = Comment_model::preparation($data->get_comments(),'full_info');
+        $o->user = User_model::preparation($data->get_user(), 'main_page');
+        $o->coments = Comment_model::preparation($data->get_comments(), 'full_info');
 
         $o->likes = rand(0, 25);
 

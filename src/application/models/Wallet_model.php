@@ -52,7 +52,8 @@ class Wallet_model extends CI_Model
         Array $user_identified,
         Int $result_balance,
         Int $result_likes
-    ): void {
+    ): void
+    {
         $current_balance = $user_identified['wallet_balance'];
 
         App::get_ci()->s->start_trans();

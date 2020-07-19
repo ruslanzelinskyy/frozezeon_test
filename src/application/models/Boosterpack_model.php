@@ -13,7 +13,7 @@ class Boosterpack_model extends CI_Emerald_Model
 
     /** @var float Цена бустерпака */
     protected $price;
-    /** @var float Банк, который наполняется  */
+    /** @var float Банк, который наполняется */
     protected $bank;
 
     /** @var string */
@@ -131,8 +131,8 @@ class Boosterpack_model extends CI_Emerald_Model
         return $boosterpack;
     }
 
-    public function buy_pack($boosterpack, $likes) {
-
+    public function buy_pack(Array $boosterpack, Int $likes): void
+    {
         $boosterpack_bank_delta = $boosterpack['price'] - $likes;
 
         $boosterpack_bank_result = $boosterpack['bank'] + $boosterpack_bank_delta;

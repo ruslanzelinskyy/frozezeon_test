@@ -1,8 +1,10 @@
 <?php
 
-class Buy_pack_service extends CI_Model {
+class Buy_pack_service extends CI_Model
+{
 
-    private function generate_likes(Array $boosterpack) {
+    private function generate_likes(Array $boosterpack): Int
+    {
         return rand(1, $boosterpack['bank'] + $boosterpack['price']);
     }
 
@@ -12,7 +14,7 @@ class Buy_pack_service extends CI_Model {
         Array $boosterpack
     ): Array
     {
-        if($user_identified['wallet_balance'] < $boosterpack['price']) {
+        if ($user_identified['wallet_balance'] < $boosterpack['price']) {
             return [
                 'last_buy_status' => 'not_enough_money'
             ];

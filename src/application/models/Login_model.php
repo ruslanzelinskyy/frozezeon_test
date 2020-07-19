@@ -1,5 +1,7 @@
 <?php
-class Login_model extends CI_Model {
+
+class Login_model extends CI_Model
+{
 
     public function __construct()
     {
@@ -15,7 +17,7 @@ class Login_model extends CI_Model {
     {
         $user = $loadedUserModel->find_by_email($userEmail);
 
-        if(empty($user) || $user['password'] != $userPassword) {
+        if (empty($user) || $user['password'] != $userPassword) {
 
             return ['status' => 'authentification_error'];
         }
@@ -25,17 +27,18 @@ class Login_model extends CI_Model {
 
         App::get_ci()->s
             ->from($loadedUserModel::CLASS_TABLE)
-            ->where(['id'=> $user['id']])
+            ->where(['id' => $user['id']])
             ->update(['token' => $token])
             ->execute();
 
         return self::authorize($loadedUserModel, $token);
     }
 
-    public static function identifyUser(User_model $loadedUserModel, String $token) {
+    public static function identifyUser(User_model $loadedUserModel, String $token): Array
+    {
         $user = $loadedUserModel->find_by_token($token);
 
-        if(empty($user)) {
+        if (empty($user)) {
             return false;
         }
 
@@ -50,7 +53,7 @@ class Login_model extends CI_Model {
 
         $userIndentified = self::identifyUser($loadedUserModel, $token);
 
-        if(!$userIndentified) {
+        if (!$userIndentified) {
             return [
                 'status' => 'authorization_error',
             ];

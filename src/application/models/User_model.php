@@ -6,7 +6,8 @@
  * Date: 27.01.2020
  * Time: 10:10
  */
-class User_model extends CI_Emerald_Model {
+class User_model extends CI_Emerald_Model
+{
     const CLASS_TABLE = 'user';
 
 
@@ -262,8 +263,7 @@ class User_model extends CI_Emerald_Model {
 
         $data = App::get_ci()->s->from(self::CLASS_TABLE)->many();
         $ret = [];
-        foreach ($data as $i)
-        {
+        foreach ($data as $i) {
             $ret[] = (new self())->set($i);
         }
         return $ret;
@@ -278,8 +278,7 @@ class User_model extends CI_Emerald_Model {
      */
     public static function preparation($data, $preparation = 'default')
     {
-        switch ($preparation)
-        {
+        switch ($preparation) {
             case 'main_page':
                 return self::_preparation_main_page($data);
             case 'default':
@@ -318,8 +317,7 @@ class User_model extends CI_Emerald_Model {
     {
         $o = new stdClass();
 
-        if (!$data->is_loaded())
-        {
+        if (!$data->is_loaded()) {
             $o->id = NULL;
         } else {
             $o->id = $data->get_id();
@@ -354,22 +352,19 @@ class User_model extends CI_Emerald_Model {
     }
 
 
-
     /**
      * Returns current user or empty model
      * @return User_model
      */
     public static function get_user()
     {
-        if (! is_null(self::$_current_user)) {
+        if (!is_null(self::$_current_user)) {
             return self::$_current_user;
         }
-        if ( ! is_null(self::get_session_id()))
-        {
+        if (!is_null(self::get_session_id())) {
             self::$_current_user = new self(self::get_session_id());
             return self::$_current_user;
-        } else
-        {
+        } else {
             return new self();
         }
     }

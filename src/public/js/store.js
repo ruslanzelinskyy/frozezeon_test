@@ -10,22 +10,22 @@ var store = new Vuex.Store({
         last_buy_likes_count: localStorage.getItem('userLikesCount') || 0,
     },
     mutations: {
-        auth(state, payload){
+        auth(state, payload) {
             localStorage.setItem('token', payload.token)
             localStorage.setItem('status', payload.status)
             localStorage.setItem('username', payload.username)
             localStorage.setItem('userMoney', payload.money)
             localStorage.setItem('userLikesCount', payload.likes)
         },
-        auth_error(state){
+        auth_error(state) {
             localStorage.setItem('status', 'server-error')
         },
-        auth_logout(state, payload){
+        auth_logout(state, payload) {
             localStorage.setItem('token', '')
             localStorage.setItem('status', payload.status)
             localStorage.setItem('username', '')
         },
-        add_money(state, payload){
+        add_money(state, payload) {
             localStorage.setItem('last_refill_status', payload.last_refill_status)
             localStorage.setItem('userMoney', payload.result_balance)
         },
@@ -51,7 +51,7 @@ var store = new Vuex.Store({
                         const username = response.data.username
 
                         axios.defaults.headers.common['Authorization'] = token
-                        commit('auth', { token, status, username })
+                        commit('auth', {token, status, username})
                         resolve(response)
                     })
                     .catch(err => {
@@ -77,7 +77,7 @@ var store = new Vuex.Store({
                         const money = response.data.money
                         const likes = response.data.likes
                         axios.defaults.headers.common['Authorization'] = token
-                        commit('auth', { token, status, username, money, likes })
+                        commit('auth', {token, status, username, money, likes})
                         resolve(response)
                     })
                     .catch(err => {
@@ -96,7 +96,7 @@ var store = new Vuex.Store({
                     .then(response => {
                         const status = response.data.status
                         axios.defaults.headers.common['Authorization'] = ''
-                        commit('auth_logout', { status })
+                        commit('auth_logout', {status})
                         resolve(response)
                     })
                     .catch(err => {
@@ -116,7 +116,7 @@ var store = new Vuex.Store({
                     .then(response => {
                         const last_refill_status = response.data.last_refill_status
                         const result_balance = response.data.result_balance
-                        commit('add_money', { last_refill_status, result_balance })
+                        commit('add_money', {last_refill_status, result_balance})
                         resolve(response)
                     })
                     .catch(err => {
