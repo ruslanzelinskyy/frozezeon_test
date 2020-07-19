@@ -9,7 +9,7 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - './dump.sql:/docker-entrypoint-initdb.d/dump.sql'
+      - './dump_updated.sql:/docker-entrypoint-initdb.d/dump.sql'
     networks:
       app:
         ipv4_address: 10.1.1.3

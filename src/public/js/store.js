@@ -152,9 +152,5 @@ var store = new Vuex.Store({
                     })
             })
         }
-    },
-    getters : {
-        isLoggedIn: state => !!localStorage.getItem('token'),
-        authStatus: state => localStorage.getItem('status'),
     }
 })

@@ -4,6 +4,7 @@ var app = new Vue({
 		login: '',
 		pass: '',
 		post: false,
+		username: localStorage.getItem('username') || 0,
 		invalidLogin: false,
 		invalidPass: false,
 		invalidSum: false,
@@ -41,11 +42,9 @@ var app = new Vue({
 		store.dispatch('authorize')
 			.then(function () {
 				if (localStorage.getItem('status') == 'success') {
-					let logoutButton = $('#logout-button')
-					logoutButton.removeClass('hidden')
-					logoutButton.text(logoutButton.text() + localStorage.getItem('username'))
-
-					$('#login-button').addClass('hidden')
+					self.username = localStorage.getItem('username')
+					self.userLikesCount = localStorage.getItem('userLikesCount')
+					self.userMoney = localStorage.getItem('userMoney')
 				}
 			})
 			.catch(err => console.log(err))
@@ -58,12 +57,10 @@ var app = new Vue({
 	},
 	methods: {
 		logOut: function () {
+			var self= this;
 			store.dispatch('logout')
 				.then(function() {
-					if(!store.isLoggedIn) {
-						$('#logout-button').addClass('hidden')
-						$('#login-button').removeClass('hidden')
-					}
+					self.username = localStorage.getItem('username')
 				})
 				.catch(err => console.log(err))
 		},
@@ -84,10 +81,11 @@ var app = new Vue({
 				authFormData.set('password', self.pass);
 				store.dispatch('authentificate', authFormData)
 					.then(function() {
-						if(store.getters.isLoggedIn) {
+						if(localStorage.getItem('status') == 'success') {
 							$('#loginModal').modal('hide')
-							$('#logout-button').removeClass('hidden')
-							$('#login-button').addClass('hidden')
+							self.username = localStorage.getItem('username')
+							self.userLikesCount = localStorage.getItem('userLikesCount')
+							self.userMoney = localStorage.getItem('userMoney')
 						}
 					})
 					.catch(err => console.log(err))

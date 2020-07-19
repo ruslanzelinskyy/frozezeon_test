@@ -23,9 +23,10 @@
         <li class="nav-item">
             <button
                     id="logout-button"
-                    class="btn btn-primary my-2 my-sm-0 hidden"
+                    class="btn btn-primary my-2 my-sm-0"
                     @click.prevent="logOut"
-            >Log out, </button>
+                    v-if="username"
+            >Log out, {{ username }}</button>
             <button
                     id="login-button"
                     type="button"
@@ -33,6 +34,7 @@
                     type="submit"
                     data-toggle="modal"
                     data-target="#loginModal"
+                    v-if="!username"
             >Log IN</button>
         </li>
         <li class="nav-item">
