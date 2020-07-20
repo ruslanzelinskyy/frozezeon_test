@@ -178,7 +178,11 @@ class Comment_model extends CI_Emerald_Model
 
     public static function create(array $data)
     {
+        $data['time_created'] = date('Y-m-d H:i:s');
+        $data['time_updated'] = $data['time_created'];
+
         App::get_ci()->s->from(self::CLASS_TABLE)->insert($data)->execute();
+
         return new static(App::get_ci()->s->get_insert_id());
     }
 
@@ -194,61 +198,60 @@ class Comment_model extends CI_Emerald_Model
      * @return self[]
      * @throws Exception
      */
-    public static function get_all_by_assign_id(int $assting_id)
+    public static function get_all_by_assign_id(Int $assting_id, Int $parent_id = 0): Object
     {
-
-        $data = App::get_ci()->s->from(self::CLASS_TABLE)->where(['assign_id' => $assting_id])->orderBy('time_created', 'ASC')->many();
+        $data = App::get_ci()->s->from(self::CLASS_TABLE)
+            ->where(['assign_id' => $assting_id, 'parent_id' => $parent_id])
+            ->orderBy('time_created', 'ASC')
+            ->many();
         $ret = [];
-        foreach ($data as $i) {
-            $ret[] = (new self())->set($i);
+
+        foreach ($data as $comment) {
+            $user = new User_model($comment['user_id']);
+
+            $comment['author_name'] = $user->get_personaname();
+
+            $ret[$comment['id']] = $comment;
+
+            if($comment['is_parent']) {
+                $ret[$comment['id']]['child_comments'] = self::get_all_by_assign_id($assting_id, $comment['id']);
+            }
         }
-        return $ret;
+
+        return (object)$ret;
     }
 
     /**
-     * @param self|self[] $data
+     * @param self|self[] $comments
      * @param string $preparation
      * @return stdClass|stdClass[]
      * @throws Exception
      */
-    public static function preparation($data, $preparation = 'default')
+    public static function preparation($comments, $preparation = 'default')
     {
         switch ($preparation) {
             case 'full_info':
-                return self::_preparation_full_info($data);
+                return self::_preparation_full_info($comments);
             default:
                 throw new Exception('undefined preparation type');
         }
     }
 
-
     /**
      * @param self[] $data
      * @return stdClass[]
      */
-    private static function _preparation_full_info($data)
+    private static function _preparation_full_info($comments)
     {
-        $ret = [];
-
-        foreach ($data as $d) {
-            $o = new stdClass();
-
-            $o->id = $d->get_id();
-            $o->text = $d->get_text();
-
-            $o->user = User_model::preparation($d->get_user(), 'main_page');
-
-            $o->likes = rand(0, 25);
-
-            $o->time_created = $d->get_time_created();
-            $o->time_updated = $d->get_time_updated();
-
-            $ret[] = $o;
-        }
-
-
-        return $ret;
+        return $comments;
     }
 
-
+    public function make_parent(Int $id): void
+    {
+        App::get_ci()->s
+            ->from(self::CLASS_TABLE)
+            ->where(['id' => $id])
+            ->update(['is_parent' => 1])
+            ->execute();
+    }
 }

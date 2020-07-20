@@ -1,28 +1,29 @@
-var store = new Vuex.Store({
+export default new Vuex.Store({
     state: {
-        status: localStorage.getItem('status') || '',
+        login_status: localStorage.getItem('login_status') || '',
         username: localStorage.getItem('username') || '',
         token: localStorage.getItem('token') || '',
         last_refill_status: localStorage.getItem('last_refill_status') || 0,
         last_buy_status: localStorage.getItem('last_buy_status') || 0,
         userMoney: localStorage.getItem('userMoney') || 0,
         userLikesCount: localStorage.getItem('userLikesCount') || 0,
-        last_buy_likes_count: localStorage.getItem('userLikesCount') || 0,
+        last_buy_likes_count: localStorage.getItem('last_buy_likes_count') || 0,
+        last_add_comment_status: localStorage.getItem('last_add_comment_status') || 0,
     },
     mutations: {
         auth(state, payload) {
             localStorage.setItem('token', payload.token)
-            localStorage.setItem('status', payload.status)
+            localStorage.setItem('login_status', payload.status)
             localStorage.setItem('username', payload.username)
             localStorage.setItem('userMoney', payload.money)
             localStorage.setItem('userLikesCount', payload.likes)
         },
         auth_error(state) {
-            localStorage.setItem('status', 'server-error')
+            localStorage.setItem('login_status', 'server-error')
         },
         auth_logout(state, payload) {
             localStorage.setItem('token', '')
-            localStorage.setItem('status', payload.status)
+            localStorage.setItem('login_status', payload.status)
             localStorage.setItem('username', '')
         },
         add_money(state, payload) {
@@ -34,7 +35,11 @@ var store = new Vuex.Store({
             localStorage.setItem('userLikesCount', payload.userLikesCount)
             localStorage.setItem('userMoney', payload.userMoney)
             localStorage.setItem('last_buy_likes_count', payload.last_buy_likes_count)
+        },
+        add_comment(state, payload) {
+            localStorage.setItem('last_add_comment_status', payload.last_add_comment_status)
         }
+
     },
     actions: {
         authentificate({commit}, authFormData) {
@@ -151,6 +156,27 @@ var store = new Vuex.Store({
                         reject(err)
                     })
             })
-        }
+        },
+        addComment({commit}, addCommentFormData) {
+            return new Promise((resolve, reject) => {
+                axios({
+                    url: '/main_page/comment',
+                    method: 'post',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    data: addCommentFormData,
+                })
+                    .then(response => {
+                        const last_add_comment_status = response.data.last_add_comment_status
+                        commit('add_comment', {
+                            last_add_comment_status
+                        })
+                        resolve(response)
+                    })
+                    .catch(err => {
+                        commit('add_money_error')
+                        reject(err)
+                    })
+            })
+        },
     }
 })

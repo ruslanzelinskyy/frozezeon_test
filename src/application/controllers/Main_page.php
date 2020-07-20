@@ -50,33 +50,50 @@ class Main_page extends MY_Controller
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NO_DATA);
         }
 
-
         $posts = Post_model::preparation($post, 'full_info');
-        return $this->response_success(['post' => $posts]);
+
+        return $this->response(['post' => $posts]);
     }
 
-    public function comment($post_id, $message)
+    public function comment()
     { // or can be App::get_ci()->input->post('news_id') , but better for GET REQUEST USE THIS ( tests )
+        $assign_id = $this->input->post('new_comment_assign_id');
+        $text = $this->input->post('new_comment_text');
+        $parent_id = $this->input->post('new_comment_parent_id');
+        $is_parent_updated = $this->input->post('is_parent_updated');
 
-        if (!User_model::is_logged()) {
-            return $this->response_error(CI_Core::RESPONSE_GENERIC_NEED_AUTH);
+        $user_identified = $this->getIdentifiedUser();
+
+        if (!$user_identified) {
+            return $this->response([
+                'status' => 'authorization_error',
+            ]);
         }
 
-        $post_id = intval($post_id);
+        $user_id = $user_identified['id'];
 
-        if (empty($post_id) || empty($message)) {
-            return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
+        $new_comment_data = [
+            'user_id' => $user_id,
+            'assign_id' => $assign_id,
+            'text' => $text,
+            'parent_id' => $parent_id
+        ];
+
+        if($is_parent_updated) {
+            $this->Comment_model->make_parent($parent_id);
         }
 
-        try {
-            $post = new Post_model($post_id);
-        } catch (EmeraldModelNoDataException $ex) {
-            return $this->response_error(CI_Core::RESPONSE_GENERIC_NO_DATA);
-        }
+        $new_comment_model = $this->Comment_model->create($new_comment_data);
 
+        $user = new User_model($user_id);
 
-        $posts = Post_model::preparation($post, 'full_info');
-        return $this->response_success(['post' => $posts]);
+        $new_comment_data['author_name'] = $user->get_personaname();
+        $new_comment_data['id'] = $new_comment_model->get_id();
+
+        return $this->response([
+            'last_add_comment_status' => 'success',
+            'new_comment' => (object)$new_comment_data
+        ]);
     }
 
     public function authentificate()
@@ -128,9 +145,9 @@ class Main_page extends MY_Controller
     public function buy_boosterpack()
     {
         $loadedUserModel = $this->User_model;
-        $userIdentified = $this->getIdentifiedUser();
+        $user_identified = $this->getIdentifiedUser();
 
-        if (!$userIdentified) {
+        if (!$user_identified) {
             return $this->response([
                 'status' => 'authorization_error',
             ]);
@@ -151,7 +168,7 @@ class Main_page extends MY_Controller
 
         return $this->response($this->Buy_pack_service->buy_pack(
             $loadedUserModel,
-            $userIdentified,
+            $user_identified,
             $boosterpack
         ));
     }
@@ -166,11 +183,11 @@ class Main_page extends MY_Controller
     {
         $loadedUserModel = $this->User_model;
 
-        $userIdentified = Login_model::identifyUser(
+        $user_identified = Login_model::identifyUser(
             $loadedUserModel,
             $this->input->get_request_header('Authorization')
         );
 
-        return $userIdentified;
+        return $user_identified;
     }
 }

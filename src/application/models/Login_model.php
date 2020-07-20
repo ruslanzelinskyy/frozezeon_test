@@ -34,7 +34,7 @@ class Login_model extends CI_Model
         return self::authorize($loadedUserModel, $token);
     }
 
-    public static function identifyUser(User_model $loadedUserModel, String $token): Array
+    public static function identifyUser(User_model $loadedUserModel, String $token)
     {
         $user = $loadedUserModel->find_by_token($token);
 
