@@ -43,7 +43,7 @@ class Wallet_model extends CI_Model
 
         return [
             'last_refill_status' => 'success',
-            'result_balance' => $result_balance
+            'userMoney' => $result_balance
         ];
     }
 
@@ -62,8 +62,10 @@ class Wallet_model extends CI_Model
         App::get_ci()->s
             ->from($loadedUserModel::CLASS_TABLE)
             ->where(['id' => $user_identified['id']])
-            ->update(['wallet_balance' => $result_balance])
-            ->update(['wallet_likes' => $result_likes])
+            ->update([
+                'wallet_balance' => $result_balance,
+                'wallet_likes' => $result_likes
+            ])
             ->execute();
 
         App::get_ci()->s->commit();

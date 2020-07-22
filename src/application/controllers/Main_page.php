@@ -35,10 +35,10 @@ class Main_page extends MY_Controller
         return $this->response_success(['posts' => $posts]);
     }
 
-    public function get_post($post_id)
+    public function get_post()
     { // or can be $this->input->post('news_id') , but better for GET REQUEST USE THIS
 
-        $post_id = intval($post_id);
+        $post_id = intval($this->input->get('post_id'));
 
         if (empty($post_id)) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
@@ -76,7 +76,8 @@ class Main_page extends MY_Controller
             'user_id' => $user_id,
             'assign_id' => $assign_id,
             'text' => $text,
-            'parent_id' => $parent_id
+            'parent_id' => $parent_id,
+            'is_parent' => 0
         ];
 
         if($is_parent_updated) {

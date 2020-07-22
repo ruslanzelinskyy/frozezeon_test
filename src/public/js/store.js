@@ -1,43 +1,76 @@
 export default new Vuex.Store({
     state: {
         login_status: localStorage.getItem('login_status') || '',
+        last_add_comment_status: localStorage.getItem('last_add_comment_status') || '',
+        last_refill_status: localStorage.getItem('last_refill_status') || '',
+        last_buy_status: localStorage.getItem('last_buy_status') || '',
+        last_post_open_status: localStorage.getItem('last_post_open_status') || '',
+
         username: localStorage.getItem('username') || '',
         token: localStorage.getItem('token') || '',
-        last_refill_status: localStorage.getItem('last_refill_status') || 0,
-        last_buy_status: localStorage.getItem('last_buy_status') || 0,
         userMoney: localStorage.getItem('userMoney') || 0,
         userLikesCount: localStorage.getItem('userLikesCount') || 0,
         last_buy_likes_count: localStorage.getItem('last_buy_likes_count') || 0,
-        last_add_comment_status: localStorage.getItem('last_add_comment_status') || 0,
+        last_opened_post: localStorage.getItem('last_opened_post') || '',
     },
     mutations: {
         auth(state, payload) {
             localStorage.setItem('token', payload.token)
+            state.token = payload.token
+
             localStorage.setItem('login_status', payload.status)
+            state.login_status = payload.status
+
             localStorage.setItem('username', payload.username)
+            state.username = payload.username
+
             localStorage.setItem('userMoney', payload.money)
+            state.userMoney = payload.money
+
             localStorage.setItem('userLikesCount', payload.likes)
+            state.userLikesCount = payload.likes
         },
         auth_error(state) {
             localStorage.setItem('login_status', 'server-error')
         },
         auth_logout(state, payload) {
             localStorage.setItem('token', '')
+            state.token = ''
             localStorage.setItem('login_status', payload.status)
-            localStorage.setItem('username', '')
+            state.login_status = payload.status
         },
-        add_money(state, payload) {
+        refill_balance(state, payload) {
             localStorage.setItem('last_refill_status', payload.last_refill_status)
-            localStorage.setItem('userMoney', payload.result_balance)
+            state.last_refill_status = payload.last_refill_status
+
+            localStorage.setItem('userMoney', payload.userMoney)
+            state.userMoney = payload.userMoney
         },
         buy_pack(state, payload) {
             localStorage.setItem('last_buy_status', payload.last_buy_status)
+            state.last_buy_status = payload.last_buy_status
+
             localStorage.setItem('userLikesCount', payload.userLikesCount)
+            state.userLikesCount = payload.userLikesCount
+
             localStorage.setItem('userMoney', payload.userMoney)
+            state.userMoney = payload.userMoney
+
             localStorage.setItem('last_buy_likes_count', payload.last_buy_likes_count)
+            state.last_buy_likes_count = payload.last_buy_likes_count
+
         },
         add_comment(state, payload) {
             localStorage.setItem('last_add_comment_status', payload.last_add_comment_status)
+        },
+        open_post(state, payload) {
+            localStorage.setItem('last_opened_post', payload.last_opened_post)
+            state.last_opened_post = payload.last_opened_post
+
+        },
+        open_post_error(state) {
+            localStorage.setItem('last_opened_post', 'server-error')
+            state.last_post_open_status = 'server-error'
         }
 
     },
@@ -54,9 +87,10 @@ export default new Vuex.Store({
                         const token = response.data.token
                         const status = response.data.status
                         const username = response.data.username
-
+                        const money = response.data.money
+                        const likes = response.data.likes
                         axios.defaults.headers.common['Authorization'] = token
-                        commit('auth', {token, status, username})
+                        commit('auth', {token, status, username, money, likes})
                         resolve(response)
                     })
                     .catch(err => {
@@ -110,7 +144,7 @@ export default new Vuex.Store({
                     })
             })
         },
-        addMoney({commit}, addMoneyFormData) {
+        refillBalance({commit}, addMoneyFormData) {
             return new Promise((resolve, reject) => {
                 axios({
                     url: '/main_page/add_money',
@@ -120,8 +154,8 @@ export default new Vuex.Store({
                 })
                     .then(response => {
                         const last_refill_status = response.data.last_refill_status
-                        const result_balance = response.data.result_balance
-                        commit('add_money', {last_refill_status, result_balance})
+                        const userMoney = response.data.userMoney
+                        commit('refill_balance', {last_refill_status, userMoney})
                         resolve(response)
                     })
                     .catch(err => {
@@ -178,5 +212,21 @@ export default new Vuex.Store({
                     })
             })
         },
+        openPost({commit}, openPostFormData) {
+            return new Promise((resolve, reject) => {
+                axios.get('/main_page/get_post?post_id=' + openPostFormData.get('post_id'))
+                    .then(response => {
+                        const last_opened_post = response.data.post
+                        commit('open_post', {
+                            last_opened_post
+                        })
+                        resolve(response)
+                    })
+                    .catch(err => {
+                        commit('open_post_error')
+                        reject(err)
+                    })
+            })
+        }
     }
 })

@@ -56,20 +56,24 @@
 .likes .heart{
     margin-right: 5px;
 }
-
+.ml-30 {
+    margin-left: 15px;
+}
+.comment-box-wrap {
+    padding-right: 15px;
+}
 .comment-box {
     padding: 0;
-    margin-left: 30px;
+    margin-left: 15px;
 }
 .comment {
     margin: 10px 0;
-
-    position: static;
+    width: 10;
     border: 1px solid black;
     padding: 8px;
     max-width: 100%;
 }
-
-.comment button {
-    width: 100%;
+.comment-btn-holder {
+    display: flex;
+    justify-content: flex-end;
 }
