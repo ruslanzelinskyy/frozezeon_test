@@ -64,7 +64,9 @@ class Login_model extends CI_Model
             'status' => 'success',
             'username' => $userIndentified['personaname'],
             'money' => $userIndentified['wallet_balance'],
-            'likes' => $userIndentified['wallet_likes']
+            'likes' => $userIndentified['wallet_likes'],
+            'total_refilled' => $userIndentified['wallet_total_refilled'],
+            'user_total_withdrawn' => $userIndentified['wallet_total_withdrawn'],
         ];
     }
 }

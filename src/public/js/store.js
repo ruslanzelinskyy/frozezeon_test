@@ -10,6 +10,8 @@ export default new Vuex.Store({
         token: localStorage.getItem('token') || '',
         userMoney: localStorage.getItem('userMoney') || 0,
         userLikesCount: localStorage.getItem('userLikesCount') || 0,
+        userTotalRefilled: localStorage.getItem('userTotalRefilled') || '',
+        userTotalWithdrawn: localStorage.getItem('userTotalWithdrawn') || '',
         last_buy_likes_count: localStorage.getItem('last_buy_likes_count') || 0,
         last_opened_post: localStorage.getItem('last_opened_post') || '',
     },
@@ -29,6 +31,12 @@ export default new Vuex.Store({
 
             localStorage.setItem('userLikesCount', payload.likes)
             state.userLikesCount = payload.likes
+
+            localStorage.setItem('userTotalRefilled', payload.total_refilled)
+            state.userTotalRefilled = payload.total_refilled
+
+            localStorage.setItem('userTotalWithdrawn', payload.user_total_withdrawn)
+            state.userTotalWithdrawn = payload.user_total_withdrawn
         },
         auth_error(state) {
             localStorage.setItem('login_status', 'server-error')
@@ -45,6 +53,9 @@ export default new Vuex.Store({
 
             localStorage.setItem('userMoney', payload.userMoney)
             state.userMoney = payload.userMoney
+
+            localStorage.setItem('userTotalRefilled', payload.userMoney)
+            state.userTotalRefilled = payload.total_refilled
         },
         buy_pack(state, payload) {
             localStorage.setItem('last_buy_status', payload.last_buy_status)
@@ -59,6 +70,8 @@ export default new Vuex.Store({
             localStorage.setItem('last_buy_likes_count', payload.last_buy_likes_count)
             state.last_buy_likes_count = payload.last_buy_likes_count
 
+            localStorage.setItem('userTotalWithdrawn', payload.user_total_withdrawn)
+            state.userTotalWithdrawn = payload.user_total_withdrawn
         },
         add_comment(state, payload) {
             localStorage.setItem('last_add_comment_status', payload.last_add_comment_status)
@@ -66,13 +79,14 @@ export default new Vuex.Store({
         open_post(state, payload) {
             localStorage.setItem('last_opened_post', payload.last_opened_post)
             state.last_opened_post = payload.last_opened_post
-
         },
         open_post_error(state) {
             localStorage.setItem('last_opened_post', 'server-error')
             state.last_post_open_status = 'server-error'
-        }
-
+        },
+        like_comment(state, payload) {
+            state.last_like_comment_status = payload.last_like_comment_status
+        },
     },
     actions: {
         authentificate({commit}, authFormData) {
@@ -89,8 +103,11 @@ export default new Vuex.Store({
                         const username = response.data.username
                         const money = response.data.money
                         const likes = response.data.likes
+                        const total_refilled = response.data.total_refilled
+                        const user_total_withdrawn = response.data.user_total_withdrawn
+
                         axios.defaults.headers.common['Authorization'] = token
-                        commit('auth', {token, status, username, money, likes})
+                        commit('auth', {token, status, username, money, likes, total_refilled, user_total_withdrawn})
                         resolve(response)
                     })
                     .catch(err => {
@@ -115,8 +132,11 @@ export default new Vuex.Store({
                         const username = response.data.username
                         const money = response.data.money
                         const likes = response.data.likes
+                        const total_refilled = response.data.total_refilled
+                        const user_total_withdrawn = response.data.user_total_withdrawn
+
                         axios.defaults.headers.common['Authorization'] = token
-                        commit('auth', {token, status, username, money, likes})
+                        commit('auth', {token, status, username, money, likes, total_refilled, user_total_withdrawn})
                         resolve(response)
                     })
                     .catch(err => {
@@ -155,7 +175,8 @@ export default new Vuex.Store({
                     .then(response => {
                         const last_refill_status = response.data.last_refill_status
                         const userMoney = response.data.userMoney
-                        commit('refill_balance', {last_refill_status, userMoney})
+                        const total_refilled = response.data.total_refilled
+                        commit('refill_balance', {last_refill_status, userMoney, total_refilled})
                         resolve(response)
                     })
                     .catch(err => {
@@ -177,11 +198,13 @@ export default new Vuex.Store({
                         const userMoney = response.data.userMoney
                         const userLikesCount = response.data.userLikesCount
                         const last_buy_likes_count = response.data.last_buy_likes_count
+                        const user_total_withdrawn = response.data.user_total_withdrawn
                         commit('buy_pack', {
                             last_buy_status,
                             userMoney,
                             userLikesCount,
-                            last_buy_likes_count
+                            last_buy_likes_count,
+                            user_total_withdrawn
                         })
                         resolve(response)
                     })
@@ -227,6 +250,38 @@ export default new Vuex.Store({
                         reject(err)
                     })
             })
-        }
+        },
+        likeComment({commit}, likeCommentFormData) {
+            return new Promise((resolve, reject) => {
+                axios({
+                    url: '/main_page/like_comment',
+                    method: 'post',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    data: likeCommentFormData,
+                })
+                    .then(response => {
+                        resolve(response)
+                    })
+                    .catch(err => {
+                        reject(err)
+                    })
+            })
+        },
+        likePost({commit}, likePostFormData) {
+            return new Promise((resolve, reject) => {
+                axios({
+                    url: '/main_page/like_post',
+                    method: 'post',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    data: likePostFormData,
+                })
+                    .then(response => {
+                        resolve(response)
+                    })
+                    .catch(err => {
+                        reject(err)
+                    })
+            })
+        },
     }
 })

@@ -36,14 +36,21 @@ class Buy_pack_service extends CI_Model
         App::get_ci()->load->model('Wallet_model');
 
         $result_balance = $user_identified['wallet_balance'] - $boosterpack['price'];
-
-        $this->Wallet_model->buy_pack($loadedUserModel, $user_identified, $result_balance, $result_likes);
+        $result_withdrawn = $user_identified['wallet_total_withdrawn'] + $boosterpack['price'];
+        $this->Wallet_model->buy_pack(
+            $loadedUserModel,
+            $user_identified,
+            $result_balance,
+            $result_likes,
+            $result_withdrawn
+        );
 
         return [
             'last_buy_status' => 'success',
             'userMoney' => $result_balance,
             'userLikesCount' => $result_likes,
             'last_buy_likes_count' => $likes_generated,
+            'user_total_withdrawn' => $result_withdrawn,
         ];
     }
 }

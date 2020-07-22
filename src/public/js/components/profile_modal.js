@@ -17,6 +17,12 @@ export default {
         userMoney() {
             return this.$store.state.userMoney
         },
+        userTotalRefilled() {
+            return this.$store.state.userTotalRefilled
+        },
+        userTotalWithdrawn() {
+            return this.$store.state.userTotalWithdrawn
+        },
     },
     created() {
         const self = this
@@ -50,6 +56,8 @@ export default {
                 <div class="modal-body">
                     <h2 class="text-center">Your likes: {{userLikesCount}}</h2>
                     <h2 class="text-center">Your money: {{userMoney}}$</h2>
+                    <h2 class="text-center">Total refilled: {{userTotalRefilled}}$</h2>
+                    <h2 class="text-center">Total withdrawn: {{userTotalWithdrawn}}$</h2>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-dismiss="modal">Ok</button>

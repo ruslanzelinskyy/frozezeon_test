@@ -25,6 +25,8 @@ class Comment_model extends CI_Emerald_Model
 
     // generated
     protected $comments;
+
+    /** @var int */
     protected $likes;
     protected $user;
 
@@ -253,5 +255,12 @@ class Comment_model extends CI_Emerald_Model
             ->where(['id' => $id])
             ->update(['is_parent' => 1])
             ->execute();
+    }
+
+    public function add_like(): void
+    {
+        $this->likes++;
+
+        $this->save('likes', $this->likes);
     }
 }

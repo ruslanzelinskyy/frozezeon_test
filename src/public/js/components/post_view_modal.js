@@ -21,6 +21,9 @@ export default {
         username() {
             return this.$store.state.last_opened_post.user ? this.$store.state.last_opened_post.user.personaname : ''
         },
+        user_logined() {
+            return this.$store.state.login_status === 'success'
+        },
     },
     created() {
         const self = this
@@ -35,6 +38,23 @@ export default {
     methods: {
         closePostModal: function () {
             $('#postModal').modal('hide')
+        },
+        likePost: function (id) {
+            const self = this
+
+            if (self.user_logined) {
+                const likePostFormData = new FormData()
+                likePostFormData.set('post_id', id)
+                this.$store.dispatch('likePost', likePostFormData)
+                    .then((response) => {
+                        if (response.data.last_like_post_status === 'success') {
+                            self.post.likes = response.data.post_likes_result
+                        }
+                    })
+                    .catch(err => console.log(err))
+            } else {
+                self.bus.$emit('openAuthModalCall')
+            }
         },
         openPostModal: function (post_id) {
             const self = this;
@@ -70,7 +90,7 @@ export default {
                         <div class="post-img" v-bind:style="{ backgroundImage: 'url(' + post.img + ')' }"></div>
                         <div class="card-body">
                             <div class="likes"
-                                 @click="addLike(post.id)">
+                                 @click="likePost(post.id)">
                                 <div class="heart-wrap" v-if="post.likes">
                                     <div class="heart">
                                         <svg class="bi bi-heart" width="1em" height="1em" viewBox="0 0 16 16"
@@ -80,7 +100,7 @@ export default {
                                                   clip-rule="evenodd"/>
                                         </svg>
                                     </div>
-                                    <span>{{post.likes}}</span>
+                                    <span v-if="post.likes != '0'">{{post.likes}}</span>
                                 </div>
                             </div>
                         </div>

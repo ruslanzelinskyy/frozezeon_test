@@ -9,9 +9,9 @@ create table boosterpack
 )
     charset = utf8;
 
-INSERT INTO app_test.boosterpack (id, price, bank, time_created, time_updated) VALUES (1, 5.00, 2.00, '2020-03-30 00:17:28', '2020-07-21 23:29:48');
-INSERT INTO app_test.boosterpack (id, price, bank, time_created, time_updated) VALUES (2, 20.00, 16.00, '2020-03-30 00:17:28', '2020-07-21 21:36:15');
-INSERT INTO app_test.boosterpack (id, price, bank, time_created, time_updated) VALUES (3, 50.00, 120.00, '2020-03-30 00:17:28', '2020-07-22 00:02:47');
+INSERT INTO app_test.boosterpack (id, price, bank, time_created, time_updated) VALUES (1, 5.00, 2.00, '2020-03-30 00:17:28', '2020-07-22 18:04:31');
+INSERT INTO app_test.boosterpack (id, price, bank, time_created, time_updated) VALUES (2, 20.00, 43.00, '2020-03-30 00:17:28', '2020-07-22 18:01:58');
+INSERT INTO app_test.boosterpack (id, price, bank, time_created, time_updated) VALUES (3, 50.00, 150.00, '2020-03-30 00:17:28', '2020-07-22 17:40:49');
 create table comment
 (
     id           int auto_increment
@@ -22,16 +22,17 @@ create table comment
     time_created timestamp  default CURRENT_TIMESTAMP null,
     time_updated timestamp  default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
     parent_id    int        default 0                 null,
-    is_parent    tinyint(1) default 0                 not null
+    is_parent    tinyint(1) default 0                 not null,
+    likes        int        default 0                 not null
 )
     charset = utf8;
 
 create index user_id
     on comment (user_id);
 
-INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent) VALUES (1, 1, 1, 'Ну чо ассигн проверим', '2020-03-27 21:39:44', '2020-07-20 22:10:03', 0, 1);
-INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent) VALUES (2, 1, 1, 'Второй коммент', '2020-03-27 21:39:55', '2020-07-20 22:10:15', 1, 1);
-INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent) VALUES (3, 2, 1, 'Второй коммент от второго человека', '2020-03-27 21:40:22', '2020-07-20 22:10:31', 0, 1);
+INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent, likes) VALUES (1, 1, 1, 'Ну чо ассигн проверим', '2020-03-27 21:39:44', '2020-07-22 17:40:57', 0, 1, 17);
+INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent, likes) VALUES (2, 1, 1, 'Второй коммент', '2020-03-27 21:39:55', '2020-07-22 17:15:40', 1, 1, 6);
+INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent, likes) VALUES (3, 2, 1, 'Второй коммент от второго человека', '2020-03-27 21:40:22', '2020-07-22 17:15:41', 0, 1, 3);
 create table post
 (
     id           int auto_increment
@@ -40,15 +41,16 @@ create table post
     text         text                                not null,
     img          varchar(1024)                       null,
     time_created timestamp default CURRENT_TIMESTAMP null,
-    time_updated timestamp default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP
+    time_updated timestamp default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
+    likes        int       default 0                 not null
 )
     charset = utf8;
 
 create index user_id
     on post (user_id);
 
-INSERT INTO app_test.post (id, user_id, text, img, time_created, time_updated) VALUES (1, 1, 'Тестовый постик 1', '/images/posts/1.png', '2018-08-30 13:31:14', '2020-07-18 22:35:18');
-INSERT INTO app_test.post (id, user_id, text, img, time_created, time_updated) VALUES (2, 1, 'Печальный пост', '/images/posts/2.png', '2018-10-11 01:33:27', '2020-07-18 22:35:28');
+INSERT INTO app_test.post (id, user_id, text, img, time_created, time_updated, likes) VALUES (1, 1, 'Тестовый постик 1', '/images/posts/1.png', '2018-08-30 13:31:14', '2020-07-22 17:41:10', 5);
+INSERT INTO app_test.post (id, user_id, text, img, time_created, time_updated, likes) VALUES (2, 1, 'Не печальный пост', '/images/posts/2.png', '2018-10-11 01:33:27', '2020-07-22 17:16:57', 1);
 create table user
 (
     id                     int unsigned auto_increment
@@ -78,7 +80,7 @@ create index time_updated
 
 INSERT INTO app_test.user (id, email, password, personaname, avatarfull, rights, wallet_likes, wallet_total_refilled, wallet_total_withdrawn, time_created, time_updated, token, wallet_balance) VALUES (1, 'admin@niceadminmail.pl', null, 'AdminProGod', 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/96/967871835afdb29f131325125d4395d55386c07a_full.jpg', 0, 0, 0.00, 0.00, '2019-07-26 01:53:54', '2020-07-17 20:56:42', null, 0.00);
 INSERT INTO app_test.user (id, email, password, personaname, avatarfull, rights, wallet_likes, wallet_total_refilled, wallet_total_withdrawn, time_created, time_updated, token, wallet_balance) VALUES (2, 'simpleuser@niceadminmail.pl', null, 'simpleuser', 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/86/86a0c845038332896455a566a1f805660a13609b_full.jpg', 0, 0, 0.00, 0.00, '2019-07-26 01:53:54', '2020-07-17 20:56:42', null, 0.00);
-INSERT INTO app_test.user (id, email, password, personaname, avatarfull, rights, wallet_likes, wallet_total_refilled, wallet_total_withdrawn, time_created, time_updated, token, wallet_balance) VALUES (3, 'user@gmail.com', 'password', 'username', '', 0, 0, 0.00, 0.00, '2020-04-18 00:46:28', '2020-07-22 00:12:11', '', 0.00);
+INSERT INTO app_test.user (id, email, password, personaname, avatarfull, rights, wallet_likes, wallet_total_refilled, wallet_total_withdrawn, time_created, time_updated, token, wallet_balance) VALUES (3, 'user@gmail.com', 'password', 'username', '', 0, 0, 0.00, 0.00, '2020-04-18 00:46:28', '2020-07-22 18:09:04', '', 0.00);
 create table user_boosterpack_history
 (
     id             int auto_increment

@@ -34,14 +34,16 @@ class Logger extends CI_Log
     public function log_wallet_buy_pack(
         $user_id,
         $balance_before,
-        $balance_result
+        $balance_result,
+        $withdrawn_result
     ): void
     {
         $this->default_log('wallet',
             "ACTION: BUY_PACK; ".
             "USERID: {$user_id}; " .
             "BALANCE_BEFORE: {$balance_before}; " .
-            "BALANCE_RESULT: {$balance_result}. "
+            "BALANCE_RESULT: {$balance_result}; " .
+            "TOTAL_WITHDRAWN_RESULT: {$withdrawn_result}. "
             , 'wallet');
     }
 

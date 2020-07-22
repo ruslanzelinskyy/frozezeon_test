@@ -20,13 +20,10 @@ class Wallet_model extends CI_Model
         App::get_ci()->s
             ->from($loadedUserModel::CLASS_TABLE)
             ->where(['id' => $user_identified['id']])
-            ->update(['wallet_balance' => $result_balance])
-            ->execute();
-
-        App::get_ci()->s
-            ->from($loadedUserModel::CLASS_TABLE)
-            ->where(['id' => $user_identified['id']])
-            ->update(['wallet_total_refilled' => $result_total_refilled])
+            ->update([
+                'wallet_balance' => $result_balance,
+                'wallet_total_refilled' => $result_total_refilled
+            ])
             ->execute();
 
         App::get_ci()->s->commit();
@@ -43,7 +40,8 @@ class Wallet_model extends CI_Model
 
         return [
             'last_refill_status' => 'success',
-            'userMoney' => $result_balance
+            'userMoney' => $result_balance,
+            'total_refilled' => $result_total_refilled
         ];
     }
 
@@ -51,7 +49,8 @@ class Wallet_model extends CI_Model
         User_model $loadedUserModel,
         Array $user_identified,
         Int $result_balance,
-        Int $result_likes
+        Int $result_likes,
+        Int $result_withdrawn
     ): void
     {
         $current_balance = $user_identified['wallet_balance'];
@@ -64,7 +63,8 @@ class Wallet_model extends CI_Model
             ->where(['id' => $user_identified['id']])
             ->update([
                 'wallet_balance' => $result_balance,
-                'wallet_likes' => $result_likes
+                'wallet_likes' => $result_likes,
+                'wallet_total_withdrawn' => $result_withdrawn
             ])
             ->execute();
 
@@ -75,7 +75,8 @@ class Wallet_model extends CI_Model
         $this->logger->log_wallet_buy_pack(
             $user_identified['id'],
             $current_balance,
-            $result_balance
+            $result_balance,
+            $result_withdrawn
         );
     }
 }

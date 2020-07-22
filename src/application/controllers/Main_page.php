@@ -77,7 +77,8 @@ class Main_page extends MY_Controller
             'assign_id' => $assign_id,
             'text' => $text,
             'parent_id' => $parent_id,
-            'is_parent' => 0
+            'is_parent' => 0,
+            'likes' => 0,
         ];
 
         if($is_parent_updated) {
@@ -121,7 +122,6 @@ class Main_page extends MY_Controller
 
     public function add_money()
     {
-
         $loadedUserModel = $this->User_model;
         App::get_ci()->load->model('Wallet_model');
 
@@ -141,6 +141,67 @@ class Main_page extends MY_Controller
             $userIndentified,
             $this->input->post('amount')
         ));
+    }
+
+    public function like_comment()
+    {
+        $comment_id = $this->input->post('comment_id');
+
+        $user_identified = $this->getIdentifiedUser();
+
+        if (!$user_identified) {
+            return $this->response([
+                'status' => 'authorization_error',
+            ]);
+        }
+
+        $user_model = new User_model($user_identified['id']);
+
+        if($user_model->can_like()) {
+            $comment_model = new Comment_model($comment_id);
+            $comment_model->add_like();
+
+            $user_model->like();
+
+            return $this->response([
+                'last_like_comment_status' => 'success',
+                'comment_likes_result' => $comment_model->get_likes()
+            ]);
+        } else {
+            return $this->response([
+                'last_like_comment_status' => 'user_have_no_likes'
+            ]);
+        }
+    }
+
+    public function like_post() {
+        $post_id = $this->input->post('post_id');
+
+        $user_identified = $this->getIdentifiedUser();
+
+        if (!$user_identified) {
+            return $this->response([
+                'status' => 'authorization_error',
+            ]);
+        }
+
+        $user_model = new User_model($user_identified['id']);
+
+        if($user_model->can_like()) {
+            $post_model = new Post_model($post_id);
+            $post_model->add_like();
+
+            $user_model->like();
+
+            return $this->response([
+                'last_like_post_status' => 'success',
+                'post_likes_result' => $post_model->get_likes()
+            ]);
+        } else {
+            return $this->response([
+                'last_like_comment_status' => 'user_have_no_likes'
+            ]);
+        }
     }
 
     public function buy_boosterpack()
@@ -174,13 +235,7 @@ class Main_page extends MY_Controller
         ));
     }
 
-    public function like()
-    {
-        // todo: add like post\comment logic
-        return $this->response_success(['likes' => rand(1, 55)]); // Колво лайков под постом \ комментарием чтобы обновить
-    }
-
-    private function getIdentifiedUser(): Array
+    private function getIdentifiedUser()
     {
         $loadedUserModel = $this->User_model;
 

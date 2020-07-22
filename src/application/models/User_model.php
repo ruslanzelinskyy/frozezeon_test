@@ -382,4 +382,17 @@ class User_model extends CI_Emerald_Model
 
         return $user;
     }
+
+    public function can_like(): bool
+    {
+
+        return (bool)$this->wallet_likes;
+    }
+
+    public function like(): void
+    {
+        $this->wallet_likes--;
+
+        $this->save('wallet_likes', $this->wallet_likes);
+    }
 }

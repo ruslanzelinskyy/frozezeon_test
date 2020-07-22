@@ -46,7 +46,6 @@
     margin-left: 20px;
 }
 .likes {
-    margin-bottom: 15px;
     cursor: pointer;
 }
 .heart-wrap {
@@ -76,4 +75,20 @@
 .comment-btn-holder {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+}
+.comment-btn-holder button {
+    padding: 1px 15px;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+.boosterpacks .card {
+    align-items: center;
+    padding-top: 40px;
+}
+.boosterpacks .card-img-top {
+    width: 50%;
+}
+.boosterpacks .card-body {
+    width: 100%;
 }

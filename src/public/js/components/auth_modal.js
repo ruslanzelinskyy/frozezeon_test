@@ -38,7 +38,7 @@ export default {
                 authFormData.set('password', self.pass);
                 this.$store.dispatch('authentificate', authFormData)
                     .then(function () {
-                        if (self.login_status == 'success') {
+                        if (self.login_status === 'success') {
                             $('#authModal').modal('hide')
                         } else {
                             self.invalidResponse = true
