@@ -8,16 +8,15 @@ export default {
         return {
             new_comment_text: '',
             new_comment_parent: Object,
-            invalidResponse: false,
-            isFirst: false
+            is_first: false
         }
     },
     computed: {
         login_status() {
             return this.$store.state.login_status
         },
-        last_refill_status() {
-            return this.$store.state.last_refill_status
+        invalid_response() {
+            return this.$store.state.last_add_comment_status !== 'success'
         },
         post() {
             return this.$store.state.last_opened_post
@@ -26,7 +25,7 @@ export default {
     created() {
         const self = this
         this.bus.$on('commentOpenedPostCall', function () {
-            self.isFirst = true
+            self.is_first = true
             self.new_comment_parent = {
                 'assign_id': self.post.id,
                 'id': 0,
@@ -35,7 +34,7 @@ export default {
             self.openAddCommentModal()
         })
         this.bus.$on('openAddCommentModalCall', function (parent_comment) {
-            self.isFirst = false
+            self.is_first = false
             self.new_comment_parent = parent_comment
             self.openAddCommentModal()
         })
@@ -60,7 +59,7 @@ export default {
 
                 if(
                     self.new_comment_parent.is_parent == '0' &&
-                    !self.isFirst
+                    !self.is_first
                 ) {
                     addCommentFormData.set('is_parent_updated', 1)
                 } else {
@@ -68,19 +67,20 @@ export default {
                 }
                 self.$store.dispatch('addComment', addCommentFormData)
                     .then((response) => {
-                        // const comment = response.data.new_comment
-                        const comment = response.data.new_comment
-                        if(self.isFirst) {
-                            Vue.set(self.post.comments, comment.id, comment)
-                        } else {
-                            if(self.new_comment_parent.is_parent == '0') {
-                                Vue.set(self.new_comment_parent, 'child_comments', {})
-                            }
-                            self.new_comment_parent.is_parent = 1
-                            Vue.set(self.new_comment_parent.child_comments, comment.id, comment)
-                        }
+                       if(!self.invalid_response) {
+                           const comment = response.data.new_comment
+                           if(self.is_first) {
+                               Vue.set(self.post.comments, comment.id, comment)
+                           } else {
+                               if(self.new_comment_parent.is_parent == '0') {
+                                   Vue.set(self.new_comment_parent, 'child_comments', {})
+                               }
+                               self.new_comment_parent.is_parent = 1
+                               Vue.set(self.new_comment_parent.child_comments, comment.id, comment)
+                           }
 
-                        $('#addCommentModal').modal('hide')
+                           $('#addCommentModal').modal('hide')
+                       }
                     })
                     .catch(err => console.log(err))
             } else {
@@ -102,6 +102,9 @@ export default {
                 </div>
                 <div class="modal-body">
                     <input type="text" v-model="new_comment_text">
+                </div>
+                <div class="invalid-feedback" v-if="invalid_response">
+                    Server error.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" @click="addComment(new_comment_text)" data-dismiss="modal">Comment</button>

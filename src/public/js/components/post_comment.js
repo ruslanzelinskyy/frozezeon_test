@@ -47,12 +47,10 @@ export default {
                             </svg>
                         </div>
                         <span v-if="item.likes != '0'">{{item.likes}}</span>
-    
                     </div>
                 </div>
                 <button type="button" class="btn btn-primary" @click="openAddCommentModalCall(item)">Reply</button>
             </div>
-
             <post_comment
                 v-if="item.is_parent" 
                 v-bind:comment_item="item.child_comments"
