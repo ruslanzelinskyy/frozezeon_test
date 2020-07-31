@@ -30,9 +30,9 @@ create table comment
 create index user_id
     on comment (user_id);
 
-INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent, likes) VALUES (1, 1, 1, 'Ну чо ассигн проверим', '2020-03-27 21:39:44', '2020-07-22 17:40:57', 0, 1, 17);
-INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent, likes) VALUES (2, 1, 1, 'Второй коммент', '2020-03-27 21:39:55', '2020-07-22 17:15:40', 1, 1, 6);
-INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent, likes) VALUES (3, 2, 1, 'Второй коммент от второго человека', '2020-03-27 21:40:22', '2020-07-22 17:15:41', 0, 1, 3);
+INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent, likes) VALUES (1, 1, 1, 'comment 1', '2020-03-27 21:39:44', '2020-07-22 17:40:57', 0, 1, 17);
+INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent, likes) VALUES (2, 1, 1, 'comment 2', '2020-03-27 21:39:55', '2020-07-22 17:15:40', 1, 1, 6);
+INSERT INTO app_test.comment (id, user_id, assign_id, text, time_created, time_updated, parent_id, is_parent, likes) VALUES (3, 2, 1, 'comment 3', '2020-03-27 21:40:22', '2020-07-22 17:15:41', 0, 1, 3);
 create table post
 (
     id           int auto_increment
@@ -49,8 +49,8 @@ create table post
 create index user_id
     on post (user_id);
 
-INSERT INTO app_test.post (id, user_id, text, img, time_created, time_updated, likes) VALUES (1, 1, 'Тестовый постик 1', '/images/posts/1.png', '2018-08-30 13:31:14', '2020-07-22 17:41:10', 5);
-INSERT INTO app_test.post (id, user_id, text, img, time_created, time_updated, likes) VALUES (2, 1, 'Не печальный пост', '/images/posts/2.png', '2018-10-11 01:33:27', '2020-07-22 17:16:57', 1);
+INSERT INTO app_test.post (id, user_id, text, img, time_created, time_updated, likes) VALUES (1, 1, 'post text 1', '/images/posts/1.png', '2018-08-30 13:31:14', '2020-07-22 17:41:10', 5);
+INSERT INTO app_test.post (id, user_id, text, img, time_created, time_updated, likes) VALUES (2, 1, 'post text 2', '/images/posts/2.png', '2018-10-11 01:33:27', '2020-07-22 17:16:57', 1);
 create table user
 (
     id                     int unsigned auto_increment
